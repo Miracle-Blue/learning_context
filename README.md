@@ -1,6 +1,4 @@
 # learning_context
 
-"
-context: 
-    - have example of context
-"
+## context: \n - have example of context
+
