@@ -96,7 +96,7 @@ class ColorButton extends StatelessWidget {
   const ColorButton({super.key});
 
   void _onPressed(BuildContext context) {
-    final state = context.findAncestorStateOfType<_ColoredWidgetState>();
+    final state = context.findRootAncestorStateOfType<_ColoredWidgetState>();
     if (state != null) {
       state.changeColor(Colors.black);
     }
