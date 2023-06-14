@@ -1,74 +1,98 @@
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+import 'inherit.dart';
+
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: DataOwnerStateFull(),
+        ),
+      ),
+    );
+  }
 }
 
-class _HomePageState extends State<HomePage> {
-  late MediaQueryData  data;
-  final FocusNode f = FocusNode();
+class DataOwnerStateFull extends StatefulWidget {
+  const DataOwnerStateFull({Key? key}) : super(key: key);
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    data = MediaQuery.of(context);
-  }
+  State<DataOwnerStateFull> createState() => _DataOwnerStateFullState();
+}
 
-  @override
-  void dispose() {
-    f.dispose();
-    super.dispose();
+class _DataOwnerStateFullState extends State<DataOwnerStateFull> {
+  var _value = 0;
+
+  void _increment() {
+    _value += 1;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (f.hasFocus) {
-          FocusScope.of(context).unfocus();
-        } else {
-          FocusScope.of(context).requestFocus(f);
-        }
-      },
-      child: Scaffold(
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextField(
-                  focusNode: f,
-                  controller: TextEditingController()..text = "padding: ${data.padding}",
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                  textAlign: TextAlign.center,
-                  showCursor: false,
-                ),
-                TextField(
-                  controller: TextEditingController()..text = "viewInsets: ${data.viewInsets}",
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                  textAlign: TextAlign.center,
-                  showCursor: false,
-                ),
-                TextField(
-                  controller: TextEditingController()..text = "viewPadding: ${data.viewPadding}",
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                  textAlign: TextAlign.center,
-                  showCursor: false,
-                ),
-              ],
-            ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          onPressed: _increment,
+          child: const Text("Tap"),
+        ),
+        DataProviderInherit(
+          value: _value,
+          child: const DataConsumerStateless(),
+        ),
+      ],
+    );
+  }
+}
+
+class DataConsumerStateless extends StatelessWidget {
+  const DataConsumerStateless({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    //! first method
+    final value = context.dependOnInheritedWidgetOfExactType<DataProviderInherit>()?.value ?? 0;
+    return Column(
+      children: [
+        Text(
+          "$value",
+          style: const TextStyle(
+            fontSize: 30,
           ),
         ),
+        const DataConsumerStateFull(),
+      ],
+    );
+  }
+}
+
+class DataConsumerStateFull extends StatefulWidget {
+  const DataConsumerStateFull({Key? key}) : super(key: key);
+
+  @override
+  State<DataConsumerStateFull> createState() => _DataConsumerStateFullState();
+}
+
+class _DataConsumerStateFullState extends State<DataConsumerStateFull> {
+  @override
+  Widget build(BuildContext context) {
+    //! second method
+    final element = context.getElementForInheritedWidgetOfExactType<DataProviderInherit>();
+    if (element != null) {
+      context.dependOnInheritedElement(element);
+    }
+    final dataProvider = element?.widget as DataProviderInherit;
+    final value = dataProvider.value;
+
+    return Text(
+      "$value",
+      style: const TextStyle(
+        fontSize: 30,
       ),
     );
   }
