@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
-class DataProviderInherit extends InheritedWidget {
+class Provider extends InheritedWidget {
   final int value;
 
-  const DataProviderInherit({
+  const Provider({
     Key? key,
     required this.value,
     required Widget child,
   }) : super(key: key, child: child);
 
+  static Provider? of(BuildContext context, {bool listen = false}) => listen
+      ? context.dependOnInheritedWidgetOfExactType<Provider>()
+      : context.getElementForInheritedWidgetOfExactType<Provider>()?.widget as Provider?;
+
   @override
-  bool updateShouldNotify(DataProviderInherit oldWidget) => value != oldWidget.value;
+  bool updateShouldNotify(Provider oldWidget) => value != oldWidget.value;
 }

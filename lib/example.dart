@@ -41,7 +41,7 @@ class _DataOwnerStateFullState extends State<DataOwnerStateFull> {
           onPressed: _increment,
           child: const Text("Tap"),
         ),
-        DataProviderInherit(
+        Provider(
           value: _value,
           child: const DataConsumerStateless(),
         ),
@@ -56,7 +56,7 @@ class DataConsumerStateless extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //! first method
-    final value = context.dependOnInheritedWidgetOfExactType<DataProviderInherit>()?.value ?? 0;
+    final value = Provider.of(context, listen: true)?.value ?? 0;
     return Column(
       children: [
         Text(
@@ -82,12 +82,7 @@ class _DataConsumerStateFullState extends State<DataConsumerStateFull> {
   @override
   Widget build(BuildContext context) {
     //! second method
-    final element = context.getElementForInheritedWidgetOfExactType<DataProviderInherit>();
-    if (element != null) {
-      context.dependOnInheritedElement(element);
-    }
-    final dataProvider = element?.widget as DataProviderInherit;
-    final value = dataProvider.value;
+    final value = Provider.of(context)?.value ?? 0;
 
     return Text(
       "$value",
